@@ -49,9 +49,12 @@ and find_helper prefix_list s =
   match prefix_list with
   | [] -> false
   | Node (h_val, h_lst) :: t -> 
-    if compare_lst_dups (str_to_lst s []) (str_to_lst h_val []) 
-    then true
-    else find_helper t s
+    if compare_lst_dups (str_to_lst s []) (str_to_lst h_val []) then 
+      true
+    else if compare (str_to_lst s []) (str_to_lst h_val []) then 
+      find s (Node (h_val, h_lst))
+    else 
+      find_helper t s
 
 let rec delete s t = 
   failwith "Inimplemented"
