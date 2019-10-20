@@ -21,13 +21,37 @@ let rec compare s prefix =
 let rec insert s t = 
   match t with
   | Node (str, tree_list) ->
-    match_prefix_w_string tree_list s
+    insert_helper tree_list s
 
-and match_prefix_w_string prefix_list s = 
+and insert_helper prefix_list s = 
   match prefix_list with
   | [] -> Node (s, [])
   | Node (h_val, h_lst) :: t -> 
     if compare (str_to_lst s []) (str_to_lst h_val []) 
     then insert s (Node (h_val, h_lst))
-    else match_prefix_w_string t s
+    else insert_helper t s
 
+let rec compare_lst_dups lst1 lst2 = 
+  match lst1, lst2 with
+  | [], [] -> true
+  | [], _ -> false
+  | _, [] -> false
+  | h1 :: t1, h2 :: t2 ->
+    if List.mem h1 lst2 && List.mem h2 lst1 then compare_lst_dups t1 t2
+    else false
+
+let rec find s t = 
+  match t with
+  | Node (str, t_list) -> 
+    find_helper t_list s 
+
+and find_helper prefix_list s = 
+  match prefix_list with
+  | [] -> false
+  | Node (h_val, h_lst) :: t -> 
+    if compare_lst_dups (str_to_lst s []) (str_to_lst h_val []) 
+    then true
+    else find_helper t s
+
+let rec delete s t = 
+  failwith "Inimplemented"
