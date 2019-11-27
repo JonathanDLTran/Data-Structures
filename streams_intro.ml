@@ -113,3 +113,36 @@ let primes =
 
 let nth_prime n  = 
   nth n primes
+
+(* Lazy evaluation *)
+(* From textbook *)
+type 'a lazylist = 
+  | LCons of 'a * 'a lazylist lazy_t
+
+let rec lazy_from n = 
+  LCons (n, lazy(lazy_from (n + 1)))
+
+let lazy_nats = lazy_from 0
+
+let lazy_hd (LCons(h, _)) = h
+
+let lazy_tl (LCons(_, t)) = Lazy.force t
+
+let rec lazy_take n stream = 
+  if n = 0 then []
+  else (lazy_hd stream) :: lazy_take (n - 1) (lazy_tl stream)
+
+let rec lazy_drop n stream = 
+  if n = 0 then stream
+  else lazy_drop (n - 1) (lazy_tl stream)
+
+let rec lazy_sum stream1 stream2 = 
+  LCons ((lazy_hd stream1) + (lazy_hd stream2),
+         lazy(lazy_sum (lazy_tl stream1) (lazy_tl stream2)))
+
+let rec fibs = 
+  LCons (1, lazy(
+      LCons (1, lazy(
+          lazy_sum (lazy_tl fibs) fibs
+        ))
+    ))
